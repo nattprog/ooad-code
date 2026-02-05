@@ -1,4 +1,4 @@
-package models;
+package seminar.models;
 
 public class Evaluation {
   private Integer evaluationId;

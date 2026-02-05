@@ -1,6 +1,6 @@
-package models;
+package seminar.models;
 
-import models.enums.AwardType;
+import seminar.models.enums.AwardType;
 
 public class Award {
     private Integer awardId;

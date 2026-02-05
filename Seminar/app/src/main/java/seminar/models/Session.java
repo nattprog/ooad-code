@@ -1,6 +1,6 @@
-package models;
+package seminar.models;
 
-import models.enums.PresentationType;
+import seminar.models.enums.PresentationType;
 import java.util.Date;
 
 public class Session {

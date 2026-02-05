@@ -1,6 +1,6 @@
-package models;
+package seminar.models;
 
-import models.enums.UserRole;
+import seminar.models.enums.UserRole;
 import java.util.Date;
 
 public class User {

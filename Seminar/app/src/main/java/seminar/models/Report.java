@@ -1,6 +1,6 @@
-package models;
+package seminar.models;
 
-import models.enums.ReportType;
+import seminar.models.enums.ReportType;
 import java.util.Date;
 
 public class Report {
