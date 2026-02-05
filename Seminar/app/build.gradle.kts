@@ -18,6 +18,7 @@ repositories {
 dependencies {
 
     implementation("org.xerial:sqlite-jdbc:3.45.1.0")
+    implementation("org.slf4j:slf4j-simple:2.0.7")
     // Use JUnit Jupiter for testing.
     testImplementation(libs.junit.jupiter)
 

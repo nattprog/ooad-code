@@ -5,7 +5,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.IOException;
 
 public class DatabaseManager {
@@ -59,7 +60,7 @@ public class DatabaseManager {
 
   public void initializeDatabase() {
     try {
-      executeSQLFile("database/schema.sql");
+      executeSQLFileFromResources("/database/schema.sql");
       System.out.println("Database schema initialized successfully.");
     } catch (IOException | SQLException e) {
       System.err.println("Failed to initialize database schema.");
@@ -67,8 +68,15 @@ public class DatabaseManager {
     }
   }
 
-  private void executeSQLFile(String filePath) throws IOException, SQLException {
-    BufferedReader reader = new BufferedReader(new FileReader(filePath));
+  private void executeSQLFileFromResources(String resourcePath) throws IOException, SQLException {
+    // Load from classpath resources instead of file system
+    InputStream inputStream = getClass().getResourceAsStream(resourcePath);
+
+    if (inputStream == null) {
+      throw new IOException("Resource not found: " + resourcePath);
+    }
+
+    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
     StringBuilder sql = new StringBuilder();
     String line;
 
@@ -81,6 +89,7 @@ public class DatabaseManager {
       sql.append(line).append(" ");
     }
     reader.close();
+    inputStream.close();
 
     // Split by semicolon and execute each statement
     String[] statements = sql.toString().split(";");
