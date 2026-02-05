@@ -17,9 +17,9 @@ public class SubmissionDAO {
         "research_title, research_abstract, supervisor_name, presentation_type, " +
         "status, submitted_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
       pstmt.setInt(1, submission.getSeminarId());
 
       if (submission.getSessionId() != null) {
@@ -58,9 +58,9 @@ public class SubmissionDAO {
   public Submission getSubmissionById(int submissionId) {
     String sql = "SELECT * FROM submissions WHERE submission_id = ?";
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setInt(1, submissionId);
       ResultSet rs = pstmt.executeQuery();
 
@@ -79,10 +79,10 @@ public class SubmissionDAO {
     String sql = "SELECT * FROM submissions ORDER BY submitted_at DESC";
     List<Submission> submissions = new ArrayList<>();
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      Statement stmt = conn.createStatement();
+      ResultSet rs = stmt.executeQuery(sql);
       while (rs.next()) {
         submissions.add(mapResultSetToSubmission(rs));
       }
@@ -98,9 +98,9 @@ public class SubmissionDAO {
     String sql = "SELECT * FROM submissions WHERE student_user_id = ? ORDER BY submitted_at DESC";
     List<Submission> submissions = new ArrayList<>();
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setInt(1, studentUserId);
       ResultSet rs = pstmt.executeQuery();
 
@@ -119,9 +119,9 @@ public class SubmissionDAO {
     String sql = "SELECT * FROM submissions WHERE seminar_id = ? ORDER BY submitted_at DESC";
     List<Submission> submissions = new ArrayList<>();
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setInt(1, seminarId);
       ResultSet rs = pstmt.executeQuery();
 
@@ -140,9 +140,9 @@ public class SubmissionDAO {
     String sql = "SELECT * FROM submissions WHERE session_id = ? ORDER BY submitted_at";
     List<Submission> submissions = new ArrayList<>();
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setInt(1, sessionId);
       ResultSet rs = pstmt.executeQuery();
 
@@ -162,9 +162,9 @@ public class SubmissionDAO {
         "AND status = 'APPROVED' ORDER BY submitted_at";
     List<Submission> submissions = new ArrayList<>();
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setInt(1, seminarId);
       ResultSet rs = pstmt.executeQuery();
 
@@ -183,9 +183,9 @@ public class SubmissionDAO {
     String sql = "SELECT * FROM submissions WHERE status = ? ORDER BY submitted_at DESC";
     List<Submission> submissions = new ArrayList<>();
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setString(1, status.name());
       ResultSet rs = pstmt.executeQuery();
 
@@ -205,9 +205,9 @@ public class SubmissionDAO {
         "research_title = ?, research_abstract = ?, supervisor_name = ?, " +
         "presentation_type = ?, status = ? WHERE submission_id = ?";
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setInt(1, submission.getSeminarId());
 
       if (submission.getSessionId() != null) {
@@ -237,9 +237,9 @@ public class SubmissionDAO {
   public boolean assignToSession(int submissionId, int sessionId) {
     String sql = "UPDATE submissions SET session_id = ? WHERE submission_id = ?";
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setInt(1, sessionId);
       pstmt.setInt(2, submissionId);
 
@@ -256,9 +256,9 @@ public class SubmissionDAO {
   public boolean updateStatus(int submissionId, SubmissionStatus status) {
     String sql = "UPDATE submissions SET status = ? WHERE submission_id = ?";
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setString(1, status.name());
       pstmt.setInt(2, submissionId);
 
@@ -275,9 +275,9 @@ public class SubmissionDAO {
   public boolean deleteSubmission(int submissionId) {
     String sql = "DELETE FROM submissions WHERE submission_id = ?";
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setInt(1, submissionId);
       int affectedRows = pstmt.executeUpdate();
       return affectedRows > 0;

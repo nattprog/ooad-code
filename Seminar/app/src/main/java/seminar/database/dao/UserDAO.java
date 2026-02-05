@@ -15,9 +15,9 @@ public class UserDAO {
     String sql = "INSERT INTO users (username, password, full_name, email, role, created_at) " +
         "VALUES (?, ?, ?, ?, ?, ?)";
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
       pstmt.setString(1, user.getUsername());
       pstmt.setString(2, user.getPassword());
       pstmt.setString(3, user.getFullName());
@@ -47,9 +47,9 @@ public class UserDAO {
   public User getUserById(int userId) {
     String sql = "SELECT * FROM users WHERE user_id = ?";
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setInt(1, userId);
       ResultSet rs = pstmt.executeQuery();
 
@@ -67,9 +67,9 @@ public class UserDAO {
   public User getUserByUsername(String username) {
     String sql = "SELECT * FROM users WHERE username = ?";
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setString(1, username);
       ResultSet rs = pstmt.executeQuery();
 
@@ -88,10 +88,10 @@ public class UserDAO {
     String sql = "SELECT * FROM users ORDER BY created_at DESC";
     List<User> users = new ArrayList<>();
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      Statement stmt = conn.createStatement();
+      ResultSet rs = stmt.executeQuery(sql);
       while (rs.next()) {
         users.add(mapResultSetToUser(rs));
       }
@@ -107,9 +107,9 @@ public class UserDAO {
     String sql = "SELECT * FROM users WHERE role = ? ORDER BY full_name";
     List<User> users = new ArrayList<>();
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setString(1, role.name());
       ResultSet rs = pstmt.executeQuery();
 
@@ -128,9 +128,9 @@ public class UserDAO {
     String sql = "UPDATE users SET username = ?, password = ?, full_name = ?, " +
         "email = ?, role = ? WHERE user_id = ?";
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setString(1, user.getUsername());
       pstmt.setString(2, user.getPassword());
       pstmt.setString(3, user.getFullName());
@@ -151,9 +151,9 @@ public class UserDAO {
   public boolean deleteUser(int userId) {
     String sql = "DELETE FROM users WHERE user_id = ?";
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setInt(1, userId);
       int affectedRows = pstmt.executeUpdate();
       return affectedRows > 0;
@@ -168,9 +168,9 @@ public class UserDAO {
   public User validateLogin(String username, String password) {
     String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setString(1, username);
       pstmt.setString(2, password);
       ResultSet rs = pstmt.executeQuery();

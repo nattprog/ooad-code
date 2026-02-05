@@ -15,9 +15,9 @@ public class TimeSlotDAO {
     String sql = "INSERT INTO time_slots (session_id, submission_id, start_time, end_time) " +
         "VALUES (?, ?, ?, ?)";
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
       pstmt.setInt(1, timeSlot.getSessionId());
 
       if (timeSlot.getSubmissionId() != null) {
@@ -100,9 +100,9 @@ public class TimeSlotDAO {
   public TimeSlot getTimeSlotById(int timeSlotId) {
     String sql = "SELECT * FROM time_slots WHERE time_slot_id = ?";
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setInt(1, timeSlotId);
       ResultSet rs = pstmt.executeQuery();
 
@@ -121,10 +121,10 @@ public class TimeSlotDAO {
     String sql = "SELECT * FROM time_slots ORDER BY start_time";
     List<TimeSlot> timeSlots = new ArrayList<>();
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      Statement stmt = conn.createStatement();
+      ResultSet rs = stmt.executeQuery(sql);
       while (rs.next()) {
         timeSlots.add(mapResultSetToTimeSlot(rs));
       }
@@ -140,9 +140,9 @@ public class TimeSlotDAO {
     String sql = "SELECT * FROM time_slots WHERE session_id = ? ORDER BY start_time";
     List<TimeSlot> timeSlots = new ArrayList<>();
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setInt(1, sessionId);
       ResultSet rs = pstmt.executeQuery();
 
@@ -162,9 +162,9 @@ public class TimeSlotDAO {
         "ORDER BY start_time";
     List<TimeSlot> timeSlots = new ArrayList<>();
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setInt(1, sessionId);
       ResultSet rs = pstmt.executeQuery();
 
@@ -182,9 +182,9 @@ public class TimeSlotDAO {
   public TimeSlot getTimeSlotBySubmission(int submissionId) {
     String sql = "SELECT * FROM time_slots WHERE submission_id = ?";
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setInt(1, submissionId);
       ResultSet rs = pstmt.executeQuery();
 
@@ -203,9 +203,9 @@ public class TimeSlotDAO {
     String sql = "UPDATE time_slots SET session_id = ?, submission_id = ?, " +
         "start_time = ?, end_time = ? WHERE time_slot_id = ?";
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setInt(1, timeSlot.getSessionId());
 
       if (timeSlot.getSubmissionId() != null) {
@@ -231,9 +231,9 @@ public class TimeSlotDAO {
   public boolean assignSubmissionToTimeSlot(int timeSlotId, int submissionId) {
     String sql = "UPDATE time_slots SET submission_id = ? WHERE time_slot_id = ?";
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setInt(1, submissionId);
       pstmt.setInt(2, timeSlotId);
 
@@ -250,9 +250,9 @@ public class TimeSlotDAO {
   public boolean unassignSubmissionFromTimeSlot(int timeSlotId) {
     String sql = "UPDATE time_slots SET submission_id = NULL WHERE time_slot_id = ?";
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setInt(1, timeSlotId);
 
       int affectedRows = pstmt.executeUpdate();
@@ -268,9 +268,9 @@ public class TimeSlotDAO {
   public boolean deleteTimeSlot(int timeSlotId) {
     String sql = "DELETE FROM time_slots WHERE time_slot_id = ?";
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setInt(1, timeSlotId);
       int affectedRows = pstmt.executeUpdate();
       return affectedRows > 0;
@@ -285,9 +285,9 @@ public class TimeSlotDAO {
   public boolean deleteTimeSlotsBySession(int sessionId) {
     String sql = "DELETE FROM time_slots WHERE session_id = ?";
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setInt(1, sessionId);
       int affectedRows = pstmt.executeUpdate();
       return affectedRows > 0;

@@ -15,9 +15,9 @@ public class SessionDAO {
     String sql = "INSERT INTO sessions (seminar_id, presentation_type, time_slots_count, " +
         "time_slots_duration, start_time, end_time) VALUES (?, ?, ?, ?, ?, ?)";
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
       pstmt.setInt(1, session.getSeminarId());
       pstmt.setString(2, session.getPresentationType().name());
       pstmt.setInt(3, session.getTimeSlotsCount());
@@ -47,9 +47,9 @@ public class SessionDAO {
   public Session getSessionById(int sessionId) {
     String sql = "SELECT * FROM sessions WHERE session_id = ?";
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setInt(1, sessionId);
       ResultSet rs = pstmt.executeQuery();
 
@@ -68,10 +68,10 @@ public class SessionDAO {
     String sql = "SELECT * FROM sessions ORDER BY start_time";
     List<Session> sessions = new ArrayList<>();
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      Statement stmt = conn.createStatement();
+      ResultSet rs = stmt.executeQuery(sql);
       while (rs.next()) {
         sessions.add(mapResultSetToSession(rs));
       }
@@ -87,9 +87,9 @@ public class SessionDAO {
     String sql = "SELECT * FROM sessions WHERE seminar_id = ? ORDER BY start_time";
     List<Session> sessions = new ArrayList<>();
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setInt(1, seminarId);
       ResultSet rs = pstmt.executeQuery();
 
@@ -108,9 +108,9 @@ public class SessionDAO {
     String sql = "SELECT * FROM sessions WHERE presentation_type = ? ORDER BY start_time";
     List<Session> sessions = new ArrayList<>();
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setString(1, type.name());
       ResultSet rs = pstmt.executeQuery();
 
@@ -130,9 +130,9 @@ public class SessionDAO {
         "time_slots_count = ?, time_slots_duration = ?, start_time = ?, end_time = ? " +
         "WHERE session_id = ?";
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setInt(1, session.getSeminarId());
       pstmt.setString(2, session.getPresentationType().name());
       pstmt.setInt(3, session.getTimeSlotsCount());
@@ -154,9 +154,9 @@ public class SessionDAO {
   public boolean deleteSession(int sessionId) {
     String sql = "DELETE FROM sessions WHERE session_id = ?";
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setInt(1, sessionId);
       int affectedRows = pstmt.executeUpdate();
       return affectedRows > 0;

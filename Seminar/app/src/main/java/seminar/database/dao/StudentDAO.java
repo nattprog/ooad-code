@@ -67,9 +67,9 @@ public class StudentDAO {
         "JOIN students s ON u.user_id = s.user_id " +
         "WHERE s.student_id = ?";
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setString(1, studentId);
       ResultSet rs = pstmt.executeQuery();
 
@@ -89,9 +89,9 @@ public class StudentDAO {
         "JOIN students s ON u.user_id = s.user_id " +
         "WHERE u.user_id = ?";
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setInt(1, userId);
       ResultSet rs = pstmt.executeQuery();
 
@@ -112,10 +112,10 @@ public class StudentDAO {
         "ORDER BY u.full_name";
     List<Student> students = new ArrayList<>();
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      Statement stmt = conn.createStatement();
+      ResultSet rs = stmt.executeQuery(sql);
       while (rs.next()) {
         students.add(mapResultSetToStudent(rs));
       }

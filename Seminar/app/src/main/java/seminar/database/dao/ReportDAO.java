@@ -127,9 +127,9 @@ public class ReportDAO {
     String sql = "UPDATE reports SET seminar_id = ?, report_type = ?, file_path = ?, " +
         "report_content = ? WHERE report_id = ?";
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setInt(1, report.getSeminarId());
       pstmt.setString(2, report.getReportType().name());
       pstmt.setString(3, report.getFilePath());
@@ -149,9 +149,9 @@ public class ReportDAO {
   public boolean deleteReport(int reportId) {
     String sql = "DELETE FROM reports WHERE report_id = ?";
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setInt(1, reportId);
       int affectedRows = pstmt.executeUpdate();
       return affectedRows > 0;

@@ -13,9 +13,9 @@ public class SeminarDAO {
   public boolean createSeminar(Seminar seminar) {
     String sql = "INSERT INTO seminars (start_time, end_time) VALUES (?, ?)";
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
       pstmt.setTimestamp(1, new Timestamp(seminar.getStartTime().getTime()));
       pstmt.setTimestamp(2, new Timestamp(seminar.getEndTime().getTime()));
 
@@ -41,9 +41,9 @@ public class SeminarDAO {
   public Seminar getSeminarById(int seminarId) {
     String sql = "SELECT * FROM seminars WHERE seminar_id = ?";
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setInt(1, seminarId);
       ResultSet rs = pstmt.executeQuery();
 
@@ -62,9 +62,10 @@ public class SeminarDAO {
     String sql = "SELECT * FROM seminars ORDER BY start_time DESC";
     List<Seminar> seminars = new ArrayList<>();
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(sql)) {
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      Statement stmt = conn.createStatement();
+      ResultSet rs = stmt.executeQuery(sql);
 
       while (rs.next()) {
         seminars.add(mapResultSetToSeminar(rs));
@@ -81,10 +82,10 @@ public class SeminarDAO {
     String sql = "SELECT * FROM seminars WHERE start_time > CURRENT_TIMESTAMP ORDER BY start_time";
     List<Seminar> seminars = new ArrayList<>();
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      Statement stmt = conn.createStatement();
+      ResultSet rs = stmt.executeQuery(sql);
       while (rs.next()) {
         seminars.add(mapResultSetToSeminar(rs));
       }
@@ -99,8 +100,9 @@ public class SeminarDAO {
   public boolean updateSeminar(Seminar seminar) {
     String sql = "UPDATE seminars SET start_time = ?, end_time = ? WHERE seminar_id = ?";
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
 
       pstmt.setTimestamp(1, new Timestamp(seminar.getStartTime().getTime()));
       pstmt.setTimestamp(2, new Timestamp(seminar.getEndTime().getTime()));
@@ -119,9 +121,9 @@ public class SeminarDAO {
   public boolean deleteSeminar(int seminarId) {
     String sql = "DELETE FROM seminars WHERE seminar_id = ?";
 
-    try (Connection conn = DatabaseManager.getInstance().getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+    try {
+      Connection conn = DatabaseManager.getInstance().getConnection();
+      PreparedStatement pstmt = conn.prepareStatement(sql);
       pstmt.setInt(1, seminarId);
       int affectedRows = pstmt.executeUpdate();
       return affectedRows > 0;

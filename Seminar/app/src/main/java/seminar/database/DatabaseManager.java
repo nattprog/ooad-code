@@ -48,9 +48,9 @@ public class DatabaseManager {
       if (connection == null || connection.isClosed()) {
         connection = DriverManager.getConnection(DB_URL);
         // Re-enable foreign keys
-        Statement stmt = connection.createStatement();
-        stmt.execute("PRAGMA foreign_keys = ON;");
-        stmt.close();
+        try (Statement stmt = connection.createStatement()) {
+          stmt.execute("PRAGMA foreign_keys = ON;");
+        }
       }
     } catch (SQLException e) {
       e.printStackTrace();
