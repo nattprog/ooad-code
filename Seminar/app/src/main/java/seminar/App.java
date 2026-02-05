@@ -1,5 +1,7 @@
 package seminar;
 
+import java.util.Scanner;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,25 +20,23 @@ public class App {
 
         System.out.println("Database initialized. Testing connection...");
 
-        try {
-            Connection conn = dbManager.getConnection();
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT 1");
-            stmt.close();
-            System.out.println("Connection test successful.");
-        } catch (SQLException e) {
-            System.err.println("Connection test failed.");
-            e.printStackTrace();
-        }
+        Scanner myObj = new Scanner(System.in);
+        System.out.println("Username:");
+        String usern = myObj.nextLine();
+        System.out.println("Password:");
+        String pass = myObj.nextLine();
+        System.out.println("Full name:");
+        String fulln = myObj.nextLine();
+        System.out.println("Email:");
+        String emai = myObj.nextLine();
+        System.out.println("Student:");
+        String stud = myObj.nextLine();
 
         // Test creating a student
-        Student student = new Student("user1", "pass123", "John Doe",
-                "john@example.com", "S001");
-        System.out.println("1\n");
+        Student student = new Student(usern, pass, fulln,
+                emai, stud);
         StudentDAO studentDAO = new StudentDAO();
-        System.out.println("2\n");
         boolean created = studentDAO.createStudent(student);
-        System.out.println("3\n");
 
         if (created) {
             System.out.println("Student created successfully with ID: " + student.getUserId());
