@@ -1,22 +1,39 @@
 package models;
 
+import models.enums.UserRole;
+import java.util.Date;
+
 public class Coordinator extends User {
-    private String name;
+    private String coordinatorId;
 
-    public Coordinator(String username, String password, String name) {
-        super(username, password, "Coordinator");// ? is this the user's name or the user's type?
-        this.name = name;
+    // Constructor for creating new coordinator (no User ID yet)
+    public Coordinator(String username, String password, String fullName, String email, String coordinatorId) {
+        super(username, password, fullName, email, UserRole.COORDINATOR);
+        this.coordinatorId = coordinatorId;
     }
 
-    public void createSession() {
+    // Constructor for loading from database (with User ID)
+    public Coordinator(Integer userId, String username, String password, String fullName,
+            String email, Date createdAt, String coordinatorId) {
+        super(userId, username, password, fullName, email, UserRole.COORDINATOR, createdAt);
+        this.coordinatorId = coordinatorId;
     }
 
-    public void assign() {
+    // Getters and Setters
+    public String getCoordinatorId() {
+        return coordinatorId;
     }
 
-    public void generateReport() {
+    public void setCoordinatorId(String coordinatorId) {
+        this.coordinatorId = coordinatorId;
     }
 
-    public void nominateAward() {
+    @Override
+    public String toString() {
+        return "Coordinator{" +
+                "coordinatorId='" + coordinatorId + '\'' +
+                ", userId=" + getUserId() +
+                ", fullName='" + getFullName() + '\'' +
+                '}';
     }
 }
