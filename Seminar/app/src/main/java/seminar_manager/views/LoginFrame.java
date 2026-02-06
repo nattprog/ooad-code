@@ -6,7 +6,7 @@ import seminar_manager.controllers.AuthController;
 import seminar_manager.models.User;
 import seminar_manager.models.enums.UserRole;
 // import seminar_manager.views.coordinator.CoordinatorHomeFrame;  // TODO: implement
-// import seminar_manager.views.evaluator.EvaluatorHomeFrame;  // TODO: implement
+import seminar_manager.views.evaluator.EvaluatorHomeFrame;
 import seminar_manager.views.student.StudentHomeFrame;
 
 import java.awt.*;
@@ -110,7 +110,7 @@ public class LoginFrame extends JFrame {
                     new StudentHomeFrame(authController);
                     break;
                 case EVALUATOR:
-                    // new EvaluatorHomeFrame(authController); // TODO: implement
+                    new EvaluatorHomeFrame(authController);
                     break;
                 case COORDINATOR:
                     // new CoordinatorHomeFrame(authController); // TODO: implement
