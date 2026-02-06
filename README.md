@@ -1,4 +1,14 @@
+
+
 ### Git and GitHub
+
+**Clone repository:**
+
+Navigate to target directory
+
+`git clone https://github.com/nattprog/ooad-code.git`
+
+**Rules:**
 
 - Work in your own branches
 
