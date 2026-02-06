@@ -11,13 +11,16 @@ public class SeminarDAO {
 
   // CREATE
   public boolean createSeminar(Seminar seminar) {
-    String sql = "INSERT INTO seminars (start_time, end_time) VALUES (?, ?)";
+    String sql = "INSERT INTO seminars (title , description, location, start_time, end_time) VALUES (?, ?, ?, ?, ?)";
 
     try {
       Connection conn = DatabaseManager.getInstance().getConnection();
       PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-      pstmt.setTimestamp(1, new Timestamp(seminar.getStartTime().getTime()));
-      pstmt.setTimestamp(2, new Timestamp(seminar.getEndTime().getTime()));
+      pstmt.setString(1, seminar.getTitle());
+      pstmt.setString(2, seminar.getDescription());
+      pstmt.setString(3, seminar.getLocation());
+      pstmt.setTimestamp(4, new Timestamp(seminar.getStartTime().getTime()));
+      pstmt.setTimestamp(5, new Timestamp(seminar.getEndTime().getTime()));
 
       int affectedRows = pstmt.executeUpdate();
 
@@ -138,6 +141,9 @@ public class SeminarDAO {
   private Seminar mapResultSetToSeminar(ResultSet rs) throws SQLException {
     return new Seminar(
         rs.getInt("seminar_id"),
+        rs.getString("title"),
+        rs.getString("description"),
+        rs.getString("location"),
         new java.util.Date(rs.getTimestamp("start_time").getTime()),
         new java.util.Date(rs.getTimestamp("end_time").getTime()));
   }

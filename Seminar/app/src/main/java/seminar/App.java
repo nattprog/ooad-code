@@ -1,16 +1,22 @@
 package seminar;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.Date;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+// import java.sql.Connection;
+// import java.sql.ResultSet;
+// import java.sql.SQLException;
+// import java.sql.Statement;
 
 import seminar.database.DatabaseManager;
 import seminar.database.dao.*;
 import seminar.models.*;
 import seminar.models.enums.*;
+import seminar.views.*;
 
 public class App {
     public static void main(String[] args) {
@@ -21,27 +27,37 @@ public class App {
         System.out.println("Database initialized. Testing connection...");
 
         Scanner myObj = new Scanner(System.in);
-        System.out.println("Username:");
-        String usern = myObj.nextLine();
-        System.out.println("Password:");
-        String pass = myObj.nextLine();
-        System.out.println("Full name:");
-        String fulln = myObj.nextLine();
-        System.out.println("Email:");
-        String emai = myObj.nextLine();
-        System.out.println("Student:");
-        String stud = myObj.nextLine();
+        System.out.println("Title:");
+        String title = myObj.nextLine();
+        System.out.println("Description:");
+        String desc = myObj.nextLine();
+        System.out.println("Location:");
+        String loc = myObj.nextLine();
+        System.out.println("Start (yyyy-MM-dd HH:mm):");
+        String start = myObj.nextLine();
+        System.out.println("End (yyyy-MM-dd HH:mm):");
+        String end = myObj.nextLine();
 
-        // Test creating a student
-        Student student = new Student(usern, pass, fulln,
-                emai, stud);
-        StudentDAO studentDAO = new StudentDAO();
-        boolean created = studentDAO.createStudent(student);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
-        if (created) {
-            System.out.println("Student created successfully with ID: " + student.getUserId());
-        } else {
-            System.out.println("Failed to create student.");
+        try {
+            Date startDate = formatter.parse(start);
+            Date endDate = formatter.parse(end);
+
+            // Create Seminar object
+            Seminar seminar = new Seminar(title, desc, loc, startDate, endDate);
+
+            SeminarDAO seminarDAO = new SeminarDAO();
+            boolean created = seminarDAO.createSeminar(seminar);
+
+            if (created) {
+                System.out.println("Seminar created successfully!");
+            } else {
+                System.out.println("Failed to create seminar.");
+            }
+        } catch (ParseException e) {
+            System.out.println("Invalid date format! Please use yyyy-MM-dd HH:mm");
+            e.printStackTrace();
         }
 
         // Close connection when done

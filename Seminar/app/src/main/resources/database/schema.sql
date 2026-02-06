@@ -69,6 +69,9 @@ CREATE TABLE
 CREATE TABLE
   IF NOT EXISTS seminars (
     seminar_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL,
+    location TEXT NOT NULL,
     start_time DATETIME NOT NULL,
     end_time DATETIME NOT NULL,
     CHECK (end_time > start_time)
