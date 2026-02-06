@@ -2,36 +2,24 @@
 -- SEMINAR MANAGEMENT SYSTEM - COMPLETE DATABASE SCHEMA
 -- ============================================================
 -- Drop existing tables if they exist (in reverse order of dependencies)
-DROP TABLE IF EXISTS reports;
-
-DROP TABLE IF EXISTS awards;
-
-DROP TABLE IF EXISTS evaluations;
-
-DROP TABLE IF EXISTS evaluator_assignments;
-
-DROP TABLE IF EXISTS time_slots;
-
-DROP TABLE IF EXISTS submissions;
-
-DROP TABLE IF EXISTS sessions;
-
-DROP TABLE IF EXISTS seminars;
-
-DROP TABLE IF EXISTS students;
-
-DROP TABLE IF EXISTS evaluators;
-
-DROP TABLE IF EXISTS coordinators;
-
-DROP TABLE IF EXISTS users;
-
+-- DROP TABLE IF EXISTS reports;
+-- DROP TABLE IF EXISTS awards;
+-- DROP TABLE IF EXISTS evaluations;
+-- DROP TABLE IF EXISTS evaluator_assignments;
+-- DROP TABLE IF EXISTS time_slots;
+-- DROP TABLE IF EXISTS submissions;
+-- DROP TABLE IF EXISTS sessions;
+-- DROP TABLE IF EXISTS seminars;
+-- DROP TABLE IF EXISTS students;
+-- DROP TABLE IF EXISTS evaluators;
+-- DROP TABLE IF EXISTS coordinators;
+-- DROP TABLE IF EXISTS users;
 -- ============================================================
 -- USERS TABLE
 -- Base table for all user types
 -- ============================================================
 CREATE TABLE
-  users (
+  IF NOT EXISTS users (
     user_id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
@@ -46,7 +34,7 @@ CREATE TABLE
 -- Student is a User
 -- ============================================================
 CREATE TABLE
-  students (
+  IF NOT EXISTS students (
     student_id TEXT PRIMARY KEY,
     user_id INTEGER UNIQUE NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
@@ -57,7 +45,7 @@ CREATE TABLE
 -- Evaluator is a User
 -- ============================================================
 CREATE TABLE
-  evaluators (
+  IF NOT EXISTS evaluators (
     evaluator_id TEXT PRIMARY KEY,
     user_id INTEGER UNIQUE NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
@@ -68,7 +56,7 @@ CREATE TABLE
 -- Coordinator is a User
 -- ============================================================
 CREATE TABLE
-  coordinators (
+  IF NOT EXISTS coordinators (
     coordinator_id TEXT PRIMARY KEY,
     user_id INTEGER UNIQUE NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE
@@ -79,8 +67,11 @@ CREATE TABLE
 -- A Seminar is created by Coordinators
 -- ============================================================
 CREATE TABLE
-  seminars (
+  IF NOT EXISTS seminars (
     seminar_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL,
+    location TEXT NOT NULL,
     start_time DATETIME NOT NULL,
     end_time DATETIME NOT NULL,
     CHECK (end_time > start_time)
@@ -93,7 +84,7 @@ CREATE TABLE
 -- A Session is created by Coordinators
 -- ============================================================
 CREATE TABLE
-  sessions (
+  IF NOT EXISTS sessions (
     session_id INTEGER PRIMARY KEY AUTOINCREMENT,
     seminar_id INTEGER NOT NULL,
     presentation_type TEXT NOT NULL CHECK (presentation_type IN ('ORAL', 'POSTER')),
@@ -116,7 +107,7 @@ CREATE TABLE
 -- Submissions are assigned to a Session by Coordinators
 -- ============================================================
 CREATE TABLE
-  submissions (
+  IF NOT EXISTS submissions (
     submission_id INTEGER PRIMARY KEY AUTOINCREMENT,
     seminar_id INTEGER NOT NULL,
     session_id INTEGER,
@@ -142,7 +133,7 @@ CREATE TABLE
 -- Submissions may be assigned to a TimeSlot by Coordinators or system
 -- ============================================================
 CREATE TABLE
-  time_slots (
+  IF NOT EXISTS time_slots (
     time_slot_id INTEGER PRIMARY KEY AUTOINCREMENT,
     session_id INTEGER NOT NULL,
     submission_id INTEGER,
@@ -162,7 +153,7 @@ CREATE TABLE
 -- EvaluatorAssignments are created by Coordinators
 -- ============================================================
 CREATE TABLE
-  evaluator_assignments (
+  IF NOT EXISTS evaluator_assignments (
     evaluator_assignment_id INTEGER PRIMARY KEY AUTOINCREMENT,
     session_id INTEGER NOT NULL,
     evaluator_user_id INTEGER NOT NULL,
@@ -181,7 +172,7 @@ CREATE TABLE
 -- Evaluation fields are filled by Evaluators
 -- ============================================================
 CREATE TABLE
-  evaluations (
+  IF NOT EXISTS evaluations (
     evaluation_id INTEGER PRIMARY KEY AUTOINCREMENT,
     evaluator_assignment_id INTEGER NOT NULL,
     submission_id INTEGER NOT NULL,
@@ -203,7 +194,7 @@ CREATE TABLE
 -- A Submission may have 0 or more Awards
 -- ============================================================
 CREATE TABLE
-  awards (
+  IF NOT EXISTS awards (
     award_id INTEGER PRIMARY KEY AUTOINCREMENT,
     seminar_id INTEGER NOT NULL,
     submission_id INTEGER NOT NULL,
@@ -218,7 +209,7 @@ CREATE TABLE
 -- A Seminar may have 0 or more Reports
 -- ============================================================
 CREATE TABLE
-  reports (
+  IF NOT EXISTS reports (
     report_id INTEGER PRIMARY KEY AUTOINCREMENT,
     seminar_id INTEGER NOT NULL,
     report_type TEXT NOT NULL CHECK (report_type IN ('SESSION_SCHEDULE', 'EVALUATION_SUMMARY', 'AWARD_LIST', 'ANALYTICS')),
@@ -231,53 +222,53 @@ CREATE TABLE
 -- ============================================================
 -- INDEXES FOR PERFORMANCE
 -- ============================================================
-CREATE INDEX idx_users_username ON users (username);
+CREATE INDEX IF NOT EXISTS idx_users_username ON users (username);
 
-CREATE INDEX idx_users_role ON users (role);
+CREATE INDEX IF NOT EXISTS idx_users_role ON users (role);
 
-CREATE INDEX idx_users_email ON users (email);
+CREATE INDEX IF NOT EXISTS idx_users_email ON users (email);
 
-CREATE INDEX idx_students_user_id ON students (user_id);
+CREATE INDEX IF NOT EXISTS idx_students_user_id ON students (user_id);
 
-CREATE INDEX idx_evaluators_user_id ON evaluators (user_id);
+CREATE INDEX IF NOT EXISTS idx_evaluators_user_id ON evaluators (user_id);
 
-CREATE INDEX idx_coordinators_user_id ON coordinators (user_id);
+CREATE INDEX IF NOT EXISTS idx_coordinators_user_id ON coordinators (user_id);
 
-CREATE INDEX idx_sessions_seminar ON sessions (seminar_id);
+CREATE INDEX IF NOT EXISTS idx_sessions_seminar ON sessions (seminar_id);
 
-CREATE INDEX idx_sessions_presentation_type ON sessions (presentation_type);
+CREATE INDEX IF NOT EXISTS idx_sessions_presentation_type ON sessions (presentation_type);
 
-CREATE INDEX idx_submissions_seminar ON submissions (seminar_id);
+CREATE INDEX IF NOT EXISTS idx_submissions_seminar ON submissions (seminar_id);
 
-CREATE INDEX idx_submissions_session ON submissions (session_id);
+CREATE INDEX IF NOT EXISTS idx_submissions_session ON submissions (session_id);
 
-CREATE INDEX idx_submissions_student ON submissions (student_user_id);
+CREATE INDEX IF NOT EXISTS idx_submissions_student ON submissions (student_user_id);
 
-CREATE INDEX idx_submissions_status ON submissions (status);
+CREATE INDEX IF NOT EXISTS idx_submissions_status ON submissions (status);
 
-CREATE INDEX idx_submissions_type ON submissions (presentation_type);
+CREATE INDEX IF NOT EXISTS idx_submissions_type ON submissions (presentation_type);
 
-CREATE INDEX idx_time_slots_session ON time_slots (session_id);
+CREATE INDEX IF NOT EXISTS idx_time_slots_session ON time_slots (session_id);
 
-CREATE INDEX idx_time_slots_submission ON time_slots (submission_id);
+CREATE INDEX IF NOT EXISTS idx_time_slots_submission ON time_slots (submission_id);
 
-CREATE INDEX idx_evaluator_assignments_session ON evaluator_assignments (session_id);
+CREATE INDEX IF NOT EXISTS idx_evaluator_assignments_session ON evaluator_assignments (session_id);
 
-CREATE INDEX idx_evaluator_assignments_evaluator ON evaluator_assignments (evaluator_user_id);
+CREATE INDEX IF NOT EXISTS idx_evaluator_assignments_evaluator ON evaluator_assignments (evaluator_user_id);
 
-CREATE INDEX idx_evaluations_assignment ON evaluations (evaluator_assignment_id);
+CREATE INDEX IF NOT EXISTS idx_evaluations_assignment ON evaluations (evaluator_assignment_id);
 
-CREATE INDEX idx_evaluations_submission ON evaluations (submission_id);
+CREATE INDEX IF NOT EXISTS idx_evaluations_submission ON evaluations (submission_id);
 
-CREATE INDEX idx_awards_seminar ON awards (seminar_id);
+CREATE INDEX IF NOT EXISTS idx_awards_seminar ON awards (seminar_id);
 
-CREATE INDEX idx_awards_submission ON awards (submission_id);
+CREATE INDEX IF NOT EXISTS idx_awards_submission ON awards (submission_id);
 
-CREATE INDEX idx_awards_type ON awards (award_type);
+CREATE INDEX IF NOT EXISTS idx_awards_type ON awards (award_type);
 
-CREATE INDEX idx_reports_seminar ON reports (seminar_id);
+CREATE INDEX IF NOT EXISTS idx_reports_seminar ON reports (seminar_id);
 
-CREATE INDEX idx_reports_type ON reports (report_type);
+CREATE INDEX IF NOT EXISTS idx_reports_type ON reports (report_type);
 
 -- ============================================================
 -- END OF SCHEMA
