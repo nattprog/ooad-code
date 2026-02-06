@@ -10,24 +10,32 @@
 
 ### Dependencies
 
-sqlite3, gradle
+Java JDK
 
 ### Environment Setup
 
-You're on your own
+**Recommended IDE:**
+
+VSCode
+
+**Recommended VSCode extensions:**
+
+Java by Oracle Corporation, oracle.com
+
+Gradle for Java by Microsoft, microsoft.com
 
 ### Run project
 
 (in seminar_manager directory)
 
-Fresh initialisation of sqlite database, and seed with dummy data:
+**Fresh initialisation of sqlite database, and seed with dummy data:**
 `./gradlew cleanSeedDb`
 
-Run project:
+**Run project:**
 `./gradlew run`
 
-Build executable jar:
+**Build executable jar:**
 `./gradlew shadowJar`
 
-Run executable jar:
+**Run executable jar:**
 `java -jar app/build/libs/app-all.jar`
