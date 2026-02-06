@@ -22,6 +22,7 @@ public class App {
         // Initialize database
         DatabaseManager dbManager = DatabaseManager.getInstance();
         dbManager.initializeDatabase();
+        dbManager.seedDatabase();
         // System.out.println("Database initialized.");
 
         // Home home = new Home();

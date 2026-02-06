@@ -68,6 +68,17 @@ public class DatabaseManager {
     }
   }
 
+  public void seedDatabase() {
+    try {
+      executeSQLFileFromResources("/database/schema.sql");
+      // executeSQLFileFromResources("/database/seed.sql");
+      System.out.println("Database schema initialized successfully.");
+    } catch (IOException | SQLException e) {
+      System.err.println("Failed to initialize database schema.");
+      e.printStackTrace();
+    }
+  }
+
   private void executeSQLFileFromResources(String resourcePath) throws IOException, SQLException {
     // Load from classpath resources instead of file system
     InputStream inputStream = getClass().getResourceAsStream(resourcePath);
