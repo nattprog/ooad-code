@@ -10,7 +10,6 @@ public class App {
         DatabaseManager dbManager = DatabaseManager.getInstance();
         dbManager.initializeDatabase();
         System.out.println("Database initialized.");
-        dbManager.seedDatabase();
 
         // Start with Login Frame
         javax.swing.SwingUtilities.invokeLater(() -> {

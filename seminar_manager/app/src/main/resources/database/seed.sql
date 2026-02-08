@@ -37,11 +37,12 @@ VALUES
     '2026-03-10 17:00:00'
   );
 
--- INSERT
--- OR IGNORE INTO sessions (seminar_id, presentation_type, time_slots_count, time_slots_duration, start_time, end_time)
--- VALUES
---   (1, 'ORAL', 3, 30, '2026-03-10 09:00:00', '2026-03-10 10:30:00'),
---   (1, 'POSTER', 2, 30, '2026-03-10 11:00:00', '2026-03-10 12:00:00');
+INSERT
+OR IGNORE INTO sessions (seminar_id, presentation_type, time_slots_count, time_slots_duration, start_time, end_time)
+VALUES
+  (1, 'ORAL', 3, 30, '2026-03-10 09:00:00', '2026-03-10 10:30:00'),
+  (1, 'POSTER', 2, 30, '2026-03-10 11:00:00', '2026-03-10 12:00:00');
+
 INSERT
 OR IGNORE INTO submissions (
   seminar_id,
@@ -76,16 +77,17 @@ VALUES
   ),
   (1, 2, 3, 'AR Learning Tools', 'Augmented reality for education', 'Dr. Chen', 'POSTER', 'APPROVED');
 
--- INSERT
--- OR IGNORE INTO time_slots (session_id, submission_id, start_time, end_time)
--- VALUES
---   -- ORAL session
---   (1, 1, '2026-03-10 09:00:00', '2026-03-10 09:30:00'),
---   (1, 2, '2026-03-10 09:30:00', '2026-03-10 10:00:00'),
---   (1, NULL, '2026-03-10 10:00:00', '2026-03-10 10:30:00'),
---   -- POSTER session
---   (2, 3, '2026-03-10 11:00:00', '2026-03-10 11:30:00'),
---   (2, NULL, '2026-03-10 11:30:00', '2026-03-10 12:00:00');
+INSERT
+OR IGNORE INTO time_slots (session_id, submission_id, start_time, end_time)
+VALUES
+  -- ORAL session
+  (1, 1, '2026-03-10 09:00:00', '2026-03-10 09:30:00'),
+  (1, 2, '2026-03-10 09:30:00', '2026-03-10 10:00:00'),
+  (1, NULL, '2026-03-10 10:00:00', '2026-03-10 10:30:00'),
+  -- POSTER session
+  (2, 3, '2026-03-10 11:00:00', '2026-03-10 11:30:00'),
+  (2, NULL, '2026-03-10 11:30:00', '2026-03-10 12:00:00');
+
 INSERT
 OR IGNORE INTO evaluator_assignments (session_id, evaluator_user_id)
 VALUES

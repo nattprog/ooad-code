@@ -9,6 +9,7 @@ import org.gradle.api.tasks.Delete
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     application
+    id("com.gradleup.shadow") version "9.3.0"
 }
 
 repositories {
@@ -80,4 +81,10 @@ tasks.register("cleanSeedDb") {
 
 tasks.named("seedDb") {
     mustRunAfter("cleanDb")
+}
+
+tasks.shadowJar {
+    archiveBaseName.set("seminar_manager")
+    archiveClassifier.set("")
+    archiveVersion.set("")
 }
