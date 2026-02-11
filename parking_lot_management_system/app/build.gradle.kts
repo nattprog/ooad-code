@@ -8,6 +8,7 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     application
+    id("com.gradleup.shadow") version "9.3.0"
 }
 
 repositories {
@@ -23,6 +24,8 @@ dependencies {
 
     // This dependency is used by the application.
     implementation(libs.guava)
+
+    implementation("org.xerial:sqlite-jdbc:3.45.1.0")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -40,4 +43,12 @@ application {
 tasks.named<Test>("test") {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
+    failOnNoDiscoveredTests = false
+}
+
+
+tasks.shadowJar {
+    archiveBaseName.set("seminar_manager")
+    archiveClassifier.set("")
+    archiveVersion.set("")
 }
