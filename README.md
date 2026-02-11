@@ -1,5 +1,3 @@
-
-
 ### Git and GitHub
 
 **Clone repository:**
