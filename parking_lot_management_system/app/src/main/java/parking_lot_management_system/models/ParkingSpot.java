@@ -6,5 +6,4 @@ public class ParkingSpot {
   private SpotType spotType;
   private boolean isOccupied;
   private Vehicle currentVehicle;
-
 }
