@@ -1,8 +1,15 @@
 package parking_lot_management_system.models;
 
+import parking_lot_management_system.models.enums.SpotType;
+
 public abstract class Vehicle {
   private String vehicleId;
-  private Boolean isHandicapped;
+
+  public Vehicle(String vehicleId) {
+    this.vehicleId = vehicleId;
+  }
+
+  public abstract boolean checkSpotValidity(SpotType spotType);
 
   public String getVehicleId() {
     return vehicleId;
@@ -10,14 +17,6 @@ public abstract class Vehicle {
 
   public void setVehicleId(String vehicleId) {
     this.vehicleId = vehicleId;
-  }
-
-  public Boolean getIsHandicapped() {
-    return isHandicapped;
-  }
-
-  public void setIsHandicapped(Boolean isHandicapped) {
-    this.isHandicapped = isHandicapped;
   }
 
 }
