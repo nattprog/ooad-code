@@ -4,9 +4,10 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class ParkingFloor {
-  private List<ParkingRow> parkingRow;
+  private int floorNumber;
+  private List<ParkingSpot> parkingSpots;
 
-  public List<ParkingRow> getParkingRow() {
-    return parkingRow;
+  public List<ParkingSpot> getParkingSpots() {
+    return parkingSpots;
   }
 }

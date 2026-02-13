@@ -22,7 +22,7 @@ public class FineService {
     FineScheme fineScheme = parkingLot.getFineScheme();
     Vehicle vehicle = ticket.getVehicle();
     ParkingSpot allocatedParkingSpot = ticket.getParkingSpot();
-    int duration = ticket.duration();
+    int duration = ticket.getDurationHours();
 
     if (duration > maxDurationHours) {
       FineType fineType = FineType.OVERSTAY;
