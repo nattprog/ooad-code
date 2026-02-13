@@ -14,7 +14,7 @@ public class Fine {
   private final BigDecimal amount;
 
   // new fine
-  Fine(Vehicle vehicle, FineScheme fineScheme, FineType fineType, Integer violatingHours) {
+  public Fine(Vehicle vehicle, FineScheme fineScheme, FineType fineType, Integer violatingHours) {
     this.fineId = null;
     this.vehicle = vehicle;
     this.fineScheme = fineScheme;
