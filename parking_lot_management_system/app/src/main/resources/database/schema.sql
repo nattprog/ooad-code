@@ -4,13 +4,13 @@
 
 -- Drop tables if they exist (for clean setup)
 -- Note: Comment out the DROP statements for production
-DROP TABLE IF EXISTS revenue;
-DROP TABLE IF EXISTS payments;
-DROP TABLE IF EXISTS fines;
-DROP TABLE IF EXISTS tickets;
-DROP TABLE IF EXISTS parking_spots;
-DROP TABLE IF EXISTS vehicles;
-DROP TABLE IF EXISTS parking_lot_config;
+-- DROP TABLE IF EXISTS revenue;
+-- DROP TABLE IF EXISTS payments;
+-- DROP TABLE IF EXISTS fines;
+-- DROP TABLE IF EXISTS tickets;
+-- DROP TABLE IF EXISTS parking_spots;
+-- DROP TABLE IF EXISTS vehicles;
+-- DROP TABLE IF EXISTS parking_lot_config;
 
 -- ============================================
 -- PARKING LOT CONFIGURATION TABLE
