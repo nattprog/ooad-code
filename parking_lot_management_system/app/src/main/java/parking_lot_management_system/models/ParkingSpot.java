@@ -11,20 +11,20 @@ public class ParkingSpot {
   private boolean isOccupied;
   private Vehicle currentVehicle;
 
-  // create new parking spot
+  // Create new parking spot (generates spotId automatically)
   public ParkingSpot(int spotNumber, int rowNumber, int floorNumber, SpotType spotType) {
     this.spotNumber = spotNumber;
     this.rowNumber = rowNumber;
     this.floorNumber = floorNumber;
-    this.spotType = spotType; // contains hourly rate
+    this.spotType = spotType;
     this.isOccupied = false;
     this.currentVehicle = null;
 
-    this.spotId = "F" + Integer.toString(floorNumber) + "-" + "R" + Integer.toString(rowNumber) + "-" + "S"
-        + Integer.toString(spotNumber);
+    // Generate spotId automatically
+    this.spotId = "F" + floorNumber + "-R" + rowNumber + "-S" + spotNumber;
   }
 
-  // from db
+  // Create from database (spotId already exists)
   public ParkingSpot(String spotId, int spotNumber, int rowNumber, int floorNumber, SpotType spotType,
       boolean isOccupied, Vehicle currentVehicle) {
     this.spotId = spotId;
@@ -42,6 +42,30 @@ public class ParkingSpot {
 
   public void setSpotId(String spotId) {
     this.spotId = spotId;
+  }
+
+  public int getSpotNumber() {
+    return spotNumber;
+  }
+
+  public void setSpotNumber(int spotNumber) {
+    this.spotNumber = spotNumber;
+  }
+
+  public int getRowNumber() {
+    return rowNumber;
+  }
+
+  public void setRowNumber(int rowNumber) {
+    this.rowNumber = rowNumber;
+  }
+
+  public int getFloorNumber() {
+    return floorNumber;
+  }
+
+  public void setFloorNumber(int floorNumber) {
+    this.floorNumber = floorNumber;
   }
 
   public SpotType getSpotType() {
@@ -66,5 +90,11 @@ public class ParkingSpot {
 
   public void setCurrentVehicle(Vehicle currentVehicle) {
     this.currentVehicle = currentVehicle;
+  }
+
+  @Override
+  public String toString() {
+    return spotId + " (" + spotType.getName() + ") - " +
+        (isOccupied ? "Occupied" : "Available");
   }
 }

@@ -1,7 +1,6 @@
 package parking_lot_management_system.models;
 
 import java.util.List;
-import java.util.ArrayList;
 
 public class ParkingFloor {
   private int floorNumber;
@@ -9,5 +8,17 @@ public class ParkingFloor {
 
   public List<ParkingSpot> getParkingSpots() {
     return parkingSpots;
+  }
+
+  public int getFloorNumber() {
+    return floorNumber;
+  }
+
+  public void setFloorNumber(int floorNumber) {
+    this.floorNumber = floorNumber;
+  }
+
+  public void setParkingSpots(List<ParkingSpot> parkingSpots) {
+    this.parkingSpots = parkingSpots;
   }
 }

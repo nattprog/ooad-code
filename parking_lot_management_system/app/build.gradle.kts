@@ -8,6 +8,7 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     application
+    // shadowJar plugin
     id("com.gradleup.shadow") version "9.3.0"
 }
 
@@ -25,7 +26,11 @@ dependencies {
     // This dependency is used by the application.
     implementation(libs.guava)
 
+    // jdbc for sqlite database in persistence strategy
     implementation("org.xerial:sqlite-jdbc:3.45.1.0")
+
+    // Add SLF4J simple logger to suppress warnings
+    implementation("org.slf4j:slf4j-simple:2.0.9")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -48,7 +53,7 @@ tasks.named<Test>("test") {
 
 
 tasks.shadowJar {
-    archiveBaseName.set("seminar_manager")
+    archiveBaseName.set("parking_lot_management_system")
     archiveClassifier.set("")
     archiveVersion.set("")
 }
