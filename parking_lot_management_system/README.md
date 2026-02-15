@@ -9,6 +9,10 @@ JDBC
 
 ### Environment Setup
 
+**Recommended OS:**
+
+Windows 11
+
 **Recommended IDE:**
 
 VSCode
@@ -21,7 +25,7 @@ Gradle for Java by Microsoft, microsoft.com
 
 ### Run project
 
-(in seminar_manager directory)
+(in parking_lot_management_system directory, containing gradlew)
 
 **Run project:**
 `./gradlew run`
