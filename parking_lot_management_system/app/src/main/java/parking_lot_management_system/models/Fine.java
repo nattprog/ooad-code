@@ -9,7 +9,7 @@ import parking_lot_management_system.models.enums.FineType;
 import parking_lot_management_system.models.enums.SpotType;
 
 public class Fine {
-  private static final int maxDurationHours = 24;
+  private static final int MAX_DURATION_HOURS = 24;
   private final Integer fineId;
   private final Vehicle vehicle;
   private final FineScheme fineScheme;
@@ -17,7 +17,9 @@ public class Fine {
   private final Integer violatingHours;
   private final BigDecimal amount;
 
-  // new fine
+  /**
+   * Create new fine (not yet in database)
+   */
   public Fine(Vehicle vehicle, FineScheme fineScheme, FineType fineType, Integer violatingHours) {
     this.fineId = null;
     this.vehicle = vehicle;
@@ -27,8 +29,10 @@ public class Fine {
     this.amount = this.fineScheme.calculateFine(violatingHours);
   }
 
-  // create instance from db entry
-  Fine(Integer fineId, Vehicle vehicle, FineScheme fineScheme, FineType fineType, Integer violatingHours) {
+  /**
+   * Create instance from database entry
+   */
+  public Fine(Integer fineId, Vehicle vehicle, FineScheme fineScheme, FineType fineType, Integer violatingHours) {
     this.fineId = fineId;
     this.vehicle = vehicle;
     this.fineScheme = fineScheme;
@@ -37,9 +41,7 @@ public class Fine {
     this.amount = this.fineScheme.calculateFine(violatingHours);
   }
 
-  // no setters bc it should only be set once, otherwise might result in amount
-  // not being calced properly.
-  // i.e. not mutable
+  // Getters only - Fine is immutable
 
   public Integer getFineId() {
     return fineId;
@@ -65,25 +67,56 @@ public class Fine {
     return amount;
   }
 
+  /**
+   * Generate fines based on ticket information
+   */
   public static List<Fine> generateFines(ParkingLot parkingLot, Ticket ticket) {
-    List<Fine> generatedFines = new ArrayList<Fine>();
+    List<Fine> generatedFines = new ArrayList<>();
 
     FineScheme fineScheme = parkingLot.getFineScheme();
     Vehicle vehicle = ticket.getVehicle();
     ParkingSpot allocatedParkingSpot = ticket.getParkingSpot();
     int duration = ticket.getDurationHours();
 
-    if (duration > maxDurationHours) {
+    // Check for overstaying (more than 24 hours)
+    if (duration > MAX_DURATION_HOURS) {
       FineType fineType = FineType.OVERSTAY;
-      Fine fine = new Fine(vehicle, fineScheme, fineType, duration - maxDurationHours);
+      int violatingHours = duration - MAX_DURATION_HOURS;
+      Fine fine = new Fine(vehicle, fineScheme, fineType, violatingHours);
       generatedFines.add(fine);
     }
 
+    // Check for unauthorized use of reserved spot
     if (allocatedParkingSpot.getSpotType() == SpotType.RESERVED) {
       FineType fineType = FineType.UNAUTHORIZED_RESERVED;
-      Fine fine = new Fine(vehicle, fineScheme, fineType, duration - maxDurationHours);
+      // Use full duration for reserved spot violation
+      Fine fine = new Fine(vehicle, fineScheme, fineType, duration);
       generatedFines.add(fine);
     }
+
     return generatedFines;
+  }
+
+  @Override
+  public String toString() {
+    return "Fine{" +
+        "fineId=" + fineId +
+        ", vehicle=" + vehicle.getVehicleId() +
+        ", fineScheme=" + fineScheme +
+        ", fineType=" + fineType +
+        ", violatingHours=" + violatingHours +
+        ", amount=" + amount +
+        '}';
+  }
+
+  /**
+   * Get description of the fine
+   */
+  public String getDescription() {
+    return switch (fineType) {
+      case OVERSTAY -> "Overstay fine: Parked for " + (violatingHours + MAX_DURATION_HOURS) +
+          " hours (exceeded " + MAX_DURATION_HOURS + " hour limit)";
+      case UNAUTHORIZED_RESERVED -> "Unauthorized use of reserved parking spot";
+    };
   }
 }
