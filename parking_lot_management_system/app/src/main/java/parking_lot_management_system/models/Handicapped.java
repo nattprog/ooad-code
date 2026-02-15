@@ -12,3 +12,5 @@ public class Handicapped extends Vehicle {
     return true;
   };
 }
+
+

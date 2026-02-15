@@ -3,12 +3,19 @@
  */
 package parking_lot_management_system;
 
-public class App {
-    public String getGreeting() {
-        return "Hello World!";
-    }
+import javax.swing.SwingUtilities;
 
+import parking_lot_management_system.views.MainFrame;
+
+public class App {
+    // public String getGreeting() {
+    // return "Hello World!";
+    // }
+
+    // public static void main(String[] args) {
+    // System.out.println(new App().getGreeting());
+    // }
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+        SwingUtilities.invokeLater(() -> new MainFrame());
     }
 }
