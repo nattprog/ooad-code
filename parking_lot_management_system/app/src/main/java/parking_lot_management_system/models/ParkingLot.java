@@ -7,14 +7,14 @@ import parking_lot_management_system.models.enums.FineScheme;
 
 public class ParkingLot {
   private FineScheme fineScheme;
-  private List<ParkingFloor> floor;
+  private List<ParkingFloor> parkingFloors;
 
   public FineScheme getFineScheme() {
     return fineScheme;
   }
 
-  public List<ParkingFloor> getFloor() {
-    return floor;
+  public List<ParkingFloor> getParkingFloors() {
+    return parkingFloors;
   }
 
 }

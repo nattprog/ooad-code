@@ -7,6 +7,7 @@ import parking_lot_management_system.models.*;
 import parking_lot_management_system.models.enums.FineType;
 import parking_lot_management_system.models.enums.FineScheme;
 
+// fine management
 public class FineService {
   private final int maxDurationHours = 24;
 

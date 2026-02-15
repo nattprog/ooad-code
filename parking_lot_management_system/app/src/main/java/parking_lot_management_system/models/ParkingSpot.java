@@ -20,8 +20,8 @@ public class ParkingSpot {
     this.isOccupied = false;
     this.currentVehicle = null;
 
-    this.spotId = "F" + Integer.toString(floorNumber) + "-" + "R" + Integer.toString(rowNumber) + "-" + "S"
-        + Integer.toString(spotNumber);
+    // this.spotId = "F" + Integer.toString(floorNumber) + "-" + "R" + Integer.toString(rowNumber) + "-" + "S"
+    //     + Integer.toString(spotNumber);
   }
 
   // from db
