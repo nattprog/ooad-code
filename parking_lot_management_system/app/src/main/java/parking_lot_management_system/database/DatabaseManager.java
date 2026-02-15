@@ -1,5 +1,8 @@
 package parking_lot_management_system.database;
 
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -14,12 +17,17 @@ import parking_lot_management_system.models.enums.*;
 /**
  * SQLite Database Manager for Parking Lot System
  * Handles all database operations including CRUD for vehicles, parking spots, tickets, fines, and payments
+ * Uses schema.sql for table creation and seed.sql for initial data
  */
 public class DatabaseManager {
 
     private static final String DB_URL = "jdbc:sqlite:parking_lot.db";
     private static Connection connection;
     private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    
+    // Paths to SQL files
+    private static final String SCHEMA_FILE = "src/main/resources/database/schema.sql";
+    private static final String SEED_FILE = "src/main/resources/database/seed.sql";
 
     /**
      * Initialize database connection and create tables if they don't exist
@@ -32,10 +40,13 @@ public class DatabaseManager {
             // Establish connection
             connection = DriverManager.getConnection(DB_URL);
             
+            // Enable foreign keys
+            connection.createStatement().execute("PRAGMA foreign_keys = ON");
+            
             System.out.println("Database connection established successfully.");
             
-            // Create tables
-            createTables();
+            // Create tables from schema.sql
+            executeSchemaFile();
             
         } catch (ClassNotFoundException e) {
             System.err.println("SQLite JDBC driver not found. Please add sqlite-jdbc jar to your classpath.");
@@ -47,92 +58,291 @@ public class DatabaseManager {
     }
 
     /**
-     * Create all required tables
+     * Execute schema.sql file to create tables
      */
-    private static void createTables() throws SQLException {
-        Statement stmt = connection.createStatement();
+    private static void executeSchemaFile() {
+        try {
+            // Try to read from resources first
+            InputStream schemaStream = DatabaseManager.class.getClassLoader()
+                .getResourceAsStream("database/schema.sql");
+            
+            String schemaSQL;
+            if (schemaStream != null) {
+                schemaSQL = new String(schemaStream.readAllBytes());
+                schemaStream.close();
+            } else {
+                // Fallback to file system
+                schemaSQL = new String(Files.readAllBytes(Paths.get(SCHEMA_FILE)));
+            }
+            
+            // Execute the schema SQL
+            executeSQLScript(schemaSQL);
+            System.out.println("Database schema created/verified successfully from schema.sql");
+            
+        } catch (IOException e) {
+            System.err.println("Could not read schema.sql file: " + e.getMessage());
+            System.out.println("Falling back to inline schema creation...");
+            createTablesInline();
+        } catch (SQLException e) {
+            System.err.println("Error executing schema.sql: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Execute seed.sql file to populate test data
+     */
+    public static void executeSeedData() {
+        try {
+            // Try to read from resources first
+            InputStream seedStream = DatabaseManager.class.getClassLoader()
+                .getResourceAsStream("database/seed.sql");
+            
+            String seedSQL;
+            if (seedStream != null) {
+                seedSQL = new String(seedStream.readAllBytes());
+                seedStream.close();
+            } else {
+                // Fallback to file system
+                seedSQL = new String(Files.readAllBytes(Paths.get(SEED_FILE)));
+            }
+            
+            // Execute the seed SQL
+            executeSQLScript(seedSQL);
+            System.out.println("Seed data loaded successfully from seed.sql");
+            
+        } catch (IOException e) {
+            System.err.println("Could not read seed.sql file: " + e.getMessage());
+            System.out.println("Skipping seed data...");
+        } catch (SQLException e) {
+            System.err.println("Error executing seed.sql: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Execute a SQL script with multiple statements
+     * Properly handles multi-line statements and comments
+     */
+    private static void executeSQLScript(String sqlScript) throws SQLException {
+        // Remove comments and split by semicolons outside of quotes/parentheses
+        StringBuilder currentStatement = new StringBuilder();
+        boolean inSingleQuote = false;
+        boolean inDoubleQuote = false;
+        boolean inComment = false;
         
-        // Parking Spots table
-        stmt.execute("""
-            CREATE TABLE IF NOT EXISTS parking_spots (
-                spot_id TEXT PRIMARY KEY,
-                spot_number INTEGER NOT NULL,
-                row_number INTEGER NOT NULL,
-                floor_number INTEGER NOT NULL,
-                spot_type TEXT NOT NULL,
-                is_occupied BOOLEAN NOT NULL DEFAULT 0,
-                current_vehicle_id TEXT,
-                FOREIGN KEY (current_vehicle_id) REFERENCES vehicles(vehicle_id)
-            )
-        """);
+        String[] lines = sqlScript.split("\n");
         
-        // Vehicles table
-        stmt.execute("""
-            CREATE TABLE IF NOT EXISTS vehicles (
-                vehicle_id TEXT PRIMARY KEY,
-                vehicle_type TEXT NOT NULL
-            )
-        """);
+        for (String line : lines) {
+            // Check for single-line comment
+            String trimmedLine = line.trim();
+            if (trimmedLine.startsWith("--")) {
+                continue; // Skip comment lines
+            }
+            
+            // Process character by character for proper parsing
+            for (int i = 0; i < line.length(); i++) {
+                char c = line.charAt(i);
+                char next = (i + 1 < line.length()) ? line.charAt(i + 1) : '\0';
+                
+                // Handle comment start
+                if (!inSingleQuote && !inDoubleQuote && c == '-' && next == '-') {
+                    inComment = true;
+                    break; // Skip rest of line
+                }
+                
+                // Toggle quote states
+                if (!inComment) {
+                    if (c == '\'' && !inDoubleQuote) {
+                        inSingleQuote = !inSingleQuote;
+                    } else if (c == '"' && !inSingleQuote) {
+                        inDoubleQuote = !inDoubleQuote;
+                    }
+                    
+                    currentStatement.append(c);
+                    
+                    // Check for statement terminator
+                    if (c == ';' && !inSingleQuote && !inDoubleQuote) {
+                        executeStatement(currentStatement.toString());
+                        currentStatement = new StringBuilder();
+                    }
+                }
+            }
+            
+            currentStatement.append('\n');
+            inComment = false; // Reset comment flag for next line
+        }
         
-        // Tickets table
-        stmt.execute("""
-            CREATE TABLE IF NOT EXISTS tickets (
-                ticket_id TEXT PRIMARY KEY,
-                vehicle_id TEXT NOT NULL,
-                spot_id TEXT NOT NULL,
-                entry_datetime TEXT NOT NULL,
-                exit_datetime TEXT,
-                duration_hours INTEGER,
-                payment_id TEXT,
-                FOREIGN KEY (vehicle_id) REFERENCES vehicles(vehicle_id),
-                FOREIGN KEY (spot_id) REFERENCES parking_spots(spot_id),
-                FOREIGN KEY (payment_id) REFERENCES payments(payment_id)
-            )
-        """);
+        // Execute any remaining statement
+        String remaining = currentStatement.toString().trim();
+        if (!remaining.isEmpty() && !remaining.equals(";")) {
+            executeStatement(remaining);
+        }
+    }
+    
+    /**
+     * Execute a single SQL statement
+     */
+    private static void executeStatement(String sql) {
+        String trimmed = sql.trim();
+        if (trimmed.isEmpty() || trimmed.equals(";")) {
+            return;
+        }
         
-        // Payments table
-        stmt.execute("""
-            CREATE TABLE IF NOT EXISTS payments (
-                payment_id TEXT PRIMARY KEY,
-                ticket_id TEXT NOT NULL,
-                parking_fee REAL NOT NULL,
-                fine_amount REAL NOT NULL DEFAULT 0,
-                total_amount REAL NOT NULL,
-                payment_method TEXT NOT NULL,
-                payment_datetime TEXT NOT NULL,
-                FOREIGN KEY (ticket_id) REFERENCES tickets(ticket_id)
-            )
-        """);
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute(trimmed);
+        } catch (SQLException e) {
+            // Only log if it's not an expected error
+            String msg = e.getMessage().toLowerCase();
+            if (!msg.contains("already exists") && !msg.contains("duplicate")) {
+                System.err.println("Warning: SQL statement failed: " + e.getMessage());
+                // Uncomment for debugging:
+                // System.err.println("Failed statement: " + trimmed.substring(0, Math.min(100, trimmed.length())));
+            }
+        }
+    }
+
+    /**
+     * Fallback method to create tables inline if schema.sql not found
+     */
+    private static void createTablesInline() {
+        try {
+            Statement stmt = connection.createStatement();
+            
+            // Parking lot config table
+            stmt.execute("""
+                CREATE TABLE IF NOT EXISTS parking_lot_config (
+                    id INTEGER PRIMARY KEY CHECK (id = 1),
+                    fine_scheme TEXT NOT NULL DEFAULT 'FIXED',
+                    total_floors INTEGER NOT NULL DEFAULT 5,
+                    created_datetime TEXT NOT NULL,
+                    last_updated_datetime TEXT NOT NULL
+                )
+            """);
+            
+            stmt.execute("""
+                INSERT OR IGNORE INTO parking_lot_config 
+                (id, fine_scheme, total_floors, created_datetime, last_updated_datetime)
+                VALUES (1, 'FIXED', 5, datetime('now'), datetime('now'))
+            """);
+            
+            // Parking Spots table
+            stmt.execute("""
+                CREATE TABLE IF NOT EXISTS parking_spots (
+                    spot_id TEXT PRIMARY KEY,
+                    spot_number INTEGER NOT NULL,
+                    row_number INTEGER NOT NULL,
+                    floor_number INTEGER NOT NULL,
+                    spot_type TEXT NOT NULL,
+                    is_occupied BOOLEAN NOT NULL DEFAULT 0,
+                    current_vehicle_id TEXT,
+                    FOREIGN KEY (current_vehicle_id) REFERENCES vehicles(vehicle_id)
+                )
+            """);
+            
+            // Vehicles table
+            stmt.execute("""
+                CREATE TABLE IF NOT EXISTS vehicles (
+                    vehicle_id TEXT PRIMARY KEY,
+                    vehicle_type TEXT NOT NULL
+                )
+            """);
+            
+            // Tickets table
+            stmt.execute("""
+                CREATE TABLE IF NOT EXISTS tickets (
+                    ticket_id TEXT PRIMARY KEY,
+                    vehicle_id TEXT NOT NULL,
+                    spot_id TEXT NOT NULL,
+                    entry_datetime TEXT NOT NULL,
+                    exit_datetime TEXT,
+                    duration_hours INTEGER,
+                    payment_id TEXT,
+                    FOREIGN KEY (vehicle_id) REFERENCES vehicles(vehicle_id),
+                    FOREIGN KEY (spot_id) REFERENCES parking_spots(spot_id),
+                    FOREIGN KEY (payment_id) REFERENCES payments(payment_id)
+                )
+            """);
+            
+            // Payments table
+            stmt.execute("""
+                CREATE TABLE IF NOT EXISTS payments (
+                    payment_id TEXT PRIMARY KEY,
+                    ticket_id TEXT NOT NULL,
+                    parking_fee REAL NOT NULL,
+                    fine_amount REAL NOT NULL DEFAULT 0,
+                    total_amount REAL NOT NULL,
+                    payment_method TEXT NOT NULL,
+                    payment_datetime TEXT NOT NULL,
+                    FOREIGN KEY (ticket_id) REFERENCES tickets(ticket_id)
+                )
+            """);
+            
+            // Fines table
+            stmt.execute("""
+                CREATE TABLE IF NOT EXISTS fines (
+                    fine_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    vehicle_id TEXT NOT NULL,
+                    ticket_id TEXT,
+                    fine_scheme TEXT NOT NULL,
+                    fine_type TEXT NOT NULL,
+                    violating_hours INTEGER NOT NULL,
+                    amount REAL NOT NULL,
+                    is_paid BOOLEAN NOT NULL DEFAULT 0,
+                    created_datetime TEXT NOT NULL,
+                    FOREIGN KEY (vehicle_id) REFERENCES vehicles(vehicle_id),
+                    FOREIGN KEY (ticket_id) REFERENCES tickets(ticket_id)
+                )
+            """);
+            
+            // Revenue tracking table
+            stmt.execute("""
+                CREATE TABLE IF NOT EXISTS revenue (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    amount REAL NOT NULL,
+                    revenue_type TEXT NOT NULL,
+                    recorded_datetime TEXT NOT NULL
+                )
+            """);
+            
+            stmt.close();
+            System.out.println("Database tables created successfully (inline).");
+            
+        } catch (SQLException e) {
+            System.err.println("Failed to create tables inline: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    // ==================== PARKING LOT CONFIG OPERATIONS ====================
+    
+    /**
+     * Get parking lot configuration (fine scheme)
+     */
+    public static FineScheme loadParkingLotConfig() throws SQLException {
+        String sql = "SELECT fine_scheme FROM parking_lot_config WHERE id = 1";
         
-        // Fines table
-        stmt.execute("""
-            CREATE TABLE IF NOT EXISTS fines (
-                fine_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                vehicle_id TEXT NOT NULL,
-                ticket_id TEXT,
-                fine_scheme TEXT NOT NULL,
-                fine_type TEXT NOT NULL,
-                violating_hours INTEGER NOT NULL,
-                amount REAL NOT NULL,
-                is_paid BOOLEAN NOT NULL DEFAULT 0,
-                created_datetime TEXT NOT NULL,
-                FOREIGN KEY (vehicle_id) REFERENCES vehicles(vehicle_id),
-                FOREIGN KEY (ticket_id) REFERENCES tickets(ticket_id)
-            )
-        """);
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            
+            if (rs.next()) {
+                return FineScheme.valueOf(rs.getString("fine_scheme"));
+            }
+        }
+        return FineScheme.FIXED; // Default
+    }
+
+    /**
+     * Update parking lot configuration (fine scheme)
+     */
+    public static void updateParkingLotConfig(FineScheme fineScheme) throws SQLException {
+        String sql = "UPDATE parking_lot_config SET fine_scheme = ?, last_updated_datetime = ? WHERE id = 1";
         
-        // Revenue tracking table
-        stmt.execute("""
-            CREATE TABLE IF NOT EXISTS revenue (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                amount REAL NOT NULL,
-                revenue_type TEXT NOT NULL,
-                recorded_datetime TEXT NOT NULL
-            )
-        """);
-        
-        stmt.close();
-        System.out.println("Database tables created/verified successfully.");
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, fineScheme.name());
+            pstmt.setString(2, LocalDateTime.now().format(DATETIME_FORMATTER));
+            pstmt.executeUpdate();
+        }
     }
 
     // ==================== PARKING SPOT OPERATIONS ====================

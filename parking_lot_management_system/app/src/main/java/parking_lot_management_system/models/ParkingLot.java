@@ -51,6 +51,12 @@ public class ParkingLot {
 
   public void setFineScheme(FineScheme fineScheme) {
     this.fineScheme = fineScheme;
+    // Persist to database
+    try {
+      DatabaseManager.updateParkingLotConfig(fineScheme);
+    } catch (SQLException e) {
+      System.err.println("Failed to update fine scheme in database: " + e.getMessage());
+    }
   }
 
   public List<ParkingFloor> getParkingFloors() {
@@ -154,6 +160,10 @@ public class ParkingLot {
    */
   public void loadFromDatabase() {
     try {
+      // Load parking lot configuration (fine scheme)
+      this.fineScheme = DatabaseManager.loadParkingLotConfig();
+      System.out.println("Fine scheme loaded: " + this.fineScheme);
+
       // Load all parking spots and organize by floor
       List<ParkingSpot> allSpots = DatabaseManager.loadAllParkingSpots();
 

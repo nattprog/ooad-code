@@ -27,6 +27,10 @@ public class App {
             // This creates 60 parking spots distributed across all spot types
             DatabaseManager.initializeParkingLot(5, 3, 4);
 
+            // Optional: Load seed data for testing/demo
+            // Uncomment the next line to populate test vehicles and scenarios
+            DatabaseManager.executeSeedData();
+
             // Get parking lot singleton and load data from database
             ParkingLot parkingLot = ParkingLot.getInstance();
             parkingLot.loadFromDatabase();

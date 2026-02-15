@@ -32,11 +32,11 @@ public class FineService {
     public static BigDecimal getTotalUnpaidFineAmount(Vehicle vehicle) {
         List<Fine> fines = getUnpaidFines(vehicle);
         BigDecimal total = BigDecimal.ZERO;
-        
+
         for (Fine fine : fines) {
             total = total.add(fine.getAmount());
         }
-        
+
         return total;
     }
 
@@ -76,7 +76,7 @@ public class FineService {
 
         StringBuilder report = new StringBuilder();
         report.append("========== UNPAID FINES ==========\n");
-        
+
         BigDecimal total = BigDecimal.ZERO;
         for (Fine fine : fines) {
             report.append("Fine ID: ").append(fine.getFineId()).append("\n");
@@ -86,10 +86,10 @@ public class FineService {
             report.append("-----------------------------------\n");
             total = total.add(fine.getAmount());
         }
-        
+
         report.append("Total Fine Amount: RM ").append(String.format("%.2f", total)).append("\n");
         report.append("==================================\n");
-        
+
         return report.toString();
     }
 }
